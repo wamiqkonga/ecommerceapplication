@@ -13,4 +13,5 @@ public class TransactionRequest {
     private UUID transId;
     private UUID orderId;
     private Calendar createdDate;
+    private String cartId;
 }

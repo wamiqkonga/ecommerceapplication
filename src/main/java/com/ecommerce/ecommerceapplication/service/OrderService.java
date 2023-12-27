@@ -27,6 +27,7 @@ public class OrderService {
         Order order = new Order();
         order.setOrderId(UUID.randomUUID());
         order.setDiscount(discount);
+        order.setCartId(cartId);
         order.setGrandTotal(grandTotal);
         order.setSubTotal(subTotal);
          return orderRepository.save(order);

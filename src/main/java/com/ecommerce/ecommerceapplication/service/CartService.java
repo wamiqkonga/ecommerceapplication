@@ -4,13 +4,13 @@ import com.ecommerce.ecommerceapplication.entity.Cart;
 import com.ecommerce.ecommerceapplication.entity.Item;
 import com.ecommerce.ecommerceapplication.enums.Status;
 import com.ecommerce.ecommerceapplication.model.CartRequest;
-import com.ecommerce.ecommerceapplication.model.CartResponse;
 import com.ecommerce.ecommerceapplication.repository.CartRepository;
 import com.ecommerce.ecommerceapplication.repository.ItemRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Slf4j
@@ -18,51 +18,47 @@ import java.util.List;
 @Service
 public class CartService {
     @Autowired
-   private ItemRepository itemRepository ;
+    private ItemRepository itemRepository;
 
     @Autowired
-   private CartRepository cartRepository ;
+    private CartRepository cartRepository;
 
 
-        public String saveCart(CartRequest cartRequest) {
-            String itemId = cartRequest.getItemId();
-            Long itemQuantity = cartRequest.getItemQuantity();
+    public String saveCart(CartRequest cartRequest) {
+        String itemId = cartRequest.getItemId();
+        Long itemQuantity = cartRequest.getItemQuantity();
 
-            boolean isExists = itemRepository.existsById(itemId);
-            Long availableQuantity = itemRepository.countItemQuantity(itemId);
+        boolean isExists = itemRepository.existsById(itemId);
+        Long availableQuantity = itemRepository.countItemQuantity(itemId);
 
-            log.info("======quantity======", +availableQuantity);
+        log.info("======quantity======", +availableQuantity);
 
-            if (isExists)
-            {
-                if (availableQuantity >= itemQuantity)
-                {
-                    if (itemQuantity < 1)
-                    {
-                        return "Quantity can't be less than 1";
-                    }
-                    else {
-                        Cart cart = new Cart();
-                        cart.setPrice(cartRequest.getPrice());
-                        cart.setSerialNo(cartRequest.getSerialNo());
-                        cart.setCartId(cartRequest.getCartId());
-                        cart.setItemId(itemId);
-                        cart.setStatus(Status.ACTIVE);
-                        cart.setItemQuantity(itemQuantity);
-                        cart.calculateTotalPrice();
+        if (isExists) {
+            if (availableQuantity >= itemQuantity) {
+                if (itemQuantity < 1) {
+                    return "Quantity can't be less than 1";
+                } else {
+                    Cart cart = new Cart();
+                    cart.setPrice(cartRequest.getPrice());
+                    cart.setSerialNo(cartRequest.getSerialNo());
+                    cart.setCartId(cartRequest.getCartId());
+                    cart.setItemId(itemId);
+                    cart.setStatus(Status.ACTIVE);
+                    cart.setItemQuantity(itemQuantity);
+                    cart.calculateTotalPrice();
 
-                        cartRepository.save(cart);
+                    cartRepository.save(cart);
 //                    updateItemQuantityInItemTable(itemId, availableQuantity - 1);
-                        return "Item Saved Successfully";
-                    }
+                    return "Item Saved Successfully";
+                }
 
-                } else
-                    return "Out Of Stock";
             } else
-                return "Item doesn't exist";
+                return "Out Of Stock";
+        } else
+            return "Item doesn't exist";
 
 
-        }
+    }
 
     private void updateItemQuantityInItemTable(String itemId, long newQuantity) {
         Item item = itemRepository.findById(itemId).get();
@@ -72,6 +68,7 @@ public class CartService {
             itemRepository.save(item);
         }
     }
+
     private void updateItemQuantityInCart(Long serialNo, long newQuantity) {
         Cart cart = cartRepository.findById(serialNo).get();
 
@@ -84,31 +81,30 @@ public class CartService {
     public String updateCart(CartRequest cartRequest) {
         long itemQuantity = cartRequest.getItemQuantity();
 
-            Cart existingCart = cartRepository.findByCartIdAndItemId(cartRequest.getCartId() , cartRequest.getItemId());
-            if (existingCart != null && itemQuantity < 0){
-                existingCart.setItemQuantity(existingCart.getItemQuantity() + cartRequest.getItemQuantity() );
+        Cart existingCart = cartRepository.findByCartIdAndItemId(cartRequest.getCartId(), cartRequest.getItemId());
+        if (existingCart != null && itemQuantity < 0) {
+            existingCart.setItemQuantity(existingCart.getItemQuantity() + cartRequest.getItemQuantity());
+            cartRepository.save(existingCart);
+            return "quantity decreases";
+
+        } else {
+            if (existingCart != null) {
+                existingCart.setItemQuantity(cartRequest.getItemQuantity() + existingCart.getItemQuantity());
+                existingCart.calculateTotalPrice();
                 cartRepository.save(existingCart);
-                return "quantity decreases";
+                return "Item quantity updated successfully";
+            } else {
+                Cart cart = new Cart();
 
+                cart.setCartId(cartRequest.getCartId());
+                cart.setItemId(cartRequest.getItemId());
+                cart.setPrice(cartRequest.getPrice());
+                cart.setItemQuantity(cartRequest.getItemQuantity());
+                cart.calculateTotalPrice();
+
+                cartRepository.save(cart);
             }
-            else {
-                if (existingCart != null) {
-                    existingCart.setItemQuantity(cartRequest.getItemQuantity() + existingCart.getItemQuantity());
-                    existingCart.calculateTotalPrice();
-                    cartRepository.save(existingCart);
-                    return "Item quantity updated successfully";
-                } else {
-                    Cart cart = new Cart();
-
-                    cart.setCartId(cartRequest.getCartId());
-                    cart.setItemId(cartRequest.getItemId());
-                    cart.setPrice(cartRequest.getPrice());
-                    cart.setItemQuantity(cartRequest.getItemQuantity());
-                    cart.calculateTotalPrice();
-
-                    cartRepository.save(cart);
-                }
-            }
+        }
         return "Updated successfully";
     }
 
@@ -117,6 +113,9 @@ public class CartService {
 
     }
 
+
+
+}
 //        public String updateCart(CartRequest cartRequest) {
 //            String cartId = cartRequest.getCartId();
 //            String itemId = cartRequest.getItemId();
@@ -205,10 +204,6 @@ public class CartService {
 //                return "Cart not found";
 //        }
 //    }
-
-
-
-}
 
 
 

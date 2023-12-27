@@ -7,9 +7,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order,Long> {
     @Query(value = "SELECT COALESCE(SUM(total_price),0)FROM cart WHERE cart_id=:cartId",nativeQuery = true)
     BigDecimal subTotal(@Param("cartId") String cartId);
+
+    Order findByOrderId(UUID orderId);
 }

@@ -26,4 +26,5 @@ public class Order {
     private BigDecimal grandTotal;
     private BigDecimal subTotal;
     private BigDecimal discount;
+    private String cartId;
 }
