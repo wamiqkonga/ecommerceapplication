@@ -8,6 +8,7 @@ import com.ecommerce.ecommerceapplication.repository.CartRepository;
 import com.ecommerce.ecommerceapplication.repository.ItemRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -35,8 +36,9 @@ public class CartService {
 
         if (isExists) {
             if (availableQuantity >= itemQuantity) {
-                if (itemQuantity < 1) {
-                    return "Quantity can't be less than 1";
+                if (itemQuantity < 0) {
+                    updateItemQuantityInItemTable(itemId,availableQuantity - itemQuantity);
+                    return "Quantity Decreased by " + itemQuantity;
                 } else {
                     Cart cart = new Cart();
                     cart.setPrice(cartRequest.getPrice());
@@ -47,8 +49,21 @@ public class CartService {
                     cart.setItemQuantity(itemQuantity);
                     cart.calculateTotalPrice();
 
+
                     cartRepository.save(cart);
-//                    updateItemQuantityInItemTable(itemId, availableQuantity - 1);
+                    // Add logging statements
+                    log.info("Item ID: {}", itemId);
+                    log.info("Available Quantity Before Update: {}", availableQuantity);
+
+
+
+
+
+                        updateItemQuantityInItemTable(itemId, availableQuantity - itemQuantity);
+
+
+
+
                     return "Item Saved Successfully";
                 }
 
@@ -108,8 +123,8 @@ public class CartService {
         return "Updated successfully";
     }
 
-    public List<Cart> getCart(String cartId) {
-        return cartRepository.findAll();
+    public List<Cart> getAllCartBySorting (String field) {
+        return cartRepository.findAll(Sort.by(Sort.Direction.ASC , field));
 
     }
 

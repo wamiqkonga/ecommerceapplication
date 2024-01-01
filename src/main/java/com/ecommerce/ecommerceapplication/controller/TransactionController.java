@@ -2,12 +2,11 @@ package com.ecommerce.ecommerceapplication.controller;
 
 import com.ecommerce.ecommerceapplication.entity.Transaction;
 import com.ecommerce.ecommerceapplication.model.TransactionRequest;
-import com.ecommerce.ecommerceapplication.repository.TransactionRepository;
 import com.ecommerce.ecommerceapplication.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class TransactionController {

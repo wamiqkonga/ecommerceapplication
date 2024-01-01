@@ -20,17 +20,17 @@ public class CartController {
         return cartService.saveCart(cartRequest);
     }
 
-    @GetMapping("/getCart/{cartId}")
-    public List <Cart> getCart (@PathVariable String cartId ){
-       return cartService.getCart(cartId);
+    @GetMapping("/getCartBySorting/{field}")
+    public List <Cart> getCart (@PathVariable String field ){
+       return cartService.getAllCartBySorting(field);
 
     }
 
     @PutMapping("/update-cart")
     public String updateCart(@RequestBody CartRequest cartRequest){
          return cartService.updateCart(cartRequest);
-    }
 
+    }
 //    @DeleteMapping("/delete-cart")
 //    public String deleteCart(@RequestBody Cart cart){
 //       return cartService.deleteCart(cart);

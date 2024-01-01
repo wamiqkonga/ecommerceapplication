@@ -40,8 +40,8 @@ public class TransactionService {
             
             UUID orderId = transactionRequest.getOrderId();
             Order order = orderRepository.findByOrderId(orderId);
-            System.out.println("inside..." + orderId);
-            System.out.println("cartId " + order.getCartId());
+//            System.out.println("inside..." + orderId);
+//            System.out.println("cartId " + order.getCartId());
             updateCartStatus(order.getCartId(), Status.DELETED);
         }
 

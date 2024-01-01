@@ -1,11 +1,14 @@
 package com.ecommerce.ecommerceapplication.controller;
 
+import com.ecommerce.ecommerceapplication.entity.Item;
 import com.ecommerce.ecommerceapplication.model.ItemRequest;
 import com.ecommerce.ecommerceapplication.model.ItemResponse;
 import com.ecommerce.ecommerceapplication.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -23,6 +26,17 @@ public class ItemController {
    @GetMapping("/get/{itemId}")
    public ItemResponse getItems( @PathVariable String itemId ){
        return itemService.getById(itemId);
+
+   }
+   @GetMapping("/getItemBySorting/{field}")
+   public List<Item> getItemBySorting (@PathVariable String field){
+       return itemService.getItemBySorting(field);
+   }
+
+   @GetMapping("/getItemWithPagination/{offset}/{pageSize}")
+   public Page <Item> getItemByPagination (@PathVariable int offset , @PathVariable int pageSize){
+       Page <Item> itemsWithPagination = itemService.getItemByPagination(offset ,pageSize);
+       return itemsWithPagination;
 
    }
 }

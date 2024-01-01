@@ -18,7 +18,7 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID transId;
     private UUID orderId;
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Calendar createdDate;
     @Enumerated(EnumType.STRING)
     private Status status;
