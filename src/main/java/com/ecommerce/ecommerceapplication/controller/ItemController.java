@@ -35,8 +35,13 @@ public class ItemController {
 
    @GetMapping("/getItemWithPagination/{offset}/{pageSize}")
    public Page <Item> getItemByPagination (@PathVariable int offset , @PathVariable int pageSize){
-       Page <Item> itemsWithPagination = itemService.getItemByPagination(offset ,pageSize);
-       return itemsWithPagination;
+       return itemService.getItemByPagination(offset ,pageSize);
+
+   }
+
+   @GetMapping("/getItemWithPaginationAndSorting/{offset}/{pageSize}/{field}")
+   public Page <Item> getItemByPaginationAndSorting (@PathVariable int offset,@PathVariable int pageSize,@PathVariable String field){
+       return itemService.getItemByPaginationAndSorting(offset, pageSize, field);
 
    }
 }

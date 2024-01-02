@@ -4,6 +4,7 @@ import com.ecommerce.ecommerceapplication.entity.Item;
 import com.ecommerce.ecommerceapplication.model.ItemRequest;
 import com.ecommerce.ecommerceapplication.model.ItemResponse;
 import com.ecommerce.ecommerceapplication.repository.ItemRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,7 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Slf4j
 @Service
 public class ItemService {
     @Autowired
@@ -44,5 +45,13 @@ public class ItemService {
     public Page <Item> getItemByPagination (int offset , int pageSize){
         Page<Item> items = itemRepository.findAll(PageRequest.of(offset , pageSize));
         return items;
+    }
+
+    public Page<Item> getItemByPaginationAndSorting (int offset,int pageSize,String field){
+        log.info("offset--" + offset);
+        log.info("pageSize--" + pageSize);
+        log.info("field--" + field);
+        return itemRepository.findAll(PageRequest.of(offset , pageSize).withSort(Sort.by(field)));
+
     }
 }
