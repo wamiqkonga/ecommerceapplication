@@ -6,6 +6,8 @@ import com.ecommerce.ecommerceapplication.model.ItemResponse;
 import com.ecommerce.ecommerceapplication.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,7 +28,6 @@ public class ItemController {
    @GetMapping("/get/{itemId}")
    public ItemResponse getItems( @PathVariable String itemId ){
        return itemService.getById(itemId);
-
    }
    @GetMapping("/getItemBySorting/{field}")
    public List<Item> getItemBySorting (@PathVariable String field){

@@ -1,8 +1,10 @@
 package com.ecommerce.ecommerceapplication.service;
 
+import com.ecommerce.ecommerceapplication.entity.Dietaries;
 import com.ecommerce.ecommerceapplication.entity.Item;
 import com.ecommerce.ecommerceapplication.model.ItemRequest;
 import com.ecommerce.ecommerceapplication.model.ItemResponse;
+import com.ecommerce.ecommerceapplication.repository.DietariesRepository;
 import com.ecommerce.ecommerceapplication.repository.ItemRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +14,16 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
+
 @Slf4j
 @Service
 public class ItemService {
     @Autowired
     private ItemRepository itemRepository;
+    @Autowired
+    private DietariesRepository dietariesRepository;
 
     public void save(ItemRequest itemRequest) {
         Item item = new Item();
@@ -24,9 +31,9 @@ public class ItemService {
         item.setItemName(itemRequest.getItemName());
         item.setItemPrice(itemRequest.getItemPrice());
         item.setItemQuantity(itemRequest.getItemQuantity());
-
        itemRepository.save(item);
     }
+
 
     public ItemResponse getById(String itemId) {
         Item item = itemRepository.getById(itemId);
@@ -39,7 +46,7 @@ public class ItemService {
     }
 
     public List<Item> getItemBySorting (String field ){
-        return itemRepository.findAll(Sort.by(Sort.Direction.ASC,field));
+        return itemRepository.findAll(Sort.by(Sort.DEFAULT_DIRECTION,field));
     }
 
     public Page <Item> getItemByPagination (int offset , int pageSize){
